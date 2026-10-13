@@ -1,0 +1,45 @@
+<!doctype html>
+<html lang="ko">
+<head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>EV Calculus Lab · 미적분으로 달리다</title><link rel="stylesheet" href="style.css"><script src="app.js" defer></script></head>
+<body>
+<header class="topbar"><a class="brand" href="/" aria-label="EV Calculus Lab 홈"><span class="brand-icon">∫</span><strong>EV <span>CALCULUS LAB</span></strong></a><div class="top-right"><span class="status-dot"></span> PHYSICS SIMULATION <span class="version">v1.0</span></div></header>
+<main>
+ <section class="intro"><div><p class="eyebrow">DRIVE. COMPARE. UNDERSTAND.</p><h1>가장 효율적인 길을,<br><em>미적분으로 찾다.</em></h1><p class="subtitle">같은 목적지, 다른 에너지. 직접 운전하고 계산된 운행과 비교하며<br class="desktop"> 속도와 경사가 만드는 차이를 발견하세요.</p></div><div class="intro-note"><span>오늘의 탐구 질문</span><p>가장 짧은 길이<br>가장 효율적인 길일까요?</p><div>01 <span>경로 선택</span> → 02 <span>주행</span> → 03 <span>비교</span></div></div></section>
+ <div class="workspace">
+  <aside class="panel settings"><div class="section-head"><h2><span class="section-num">01</span> 실험 설정</h2><span class="small-tag">SI 단위 계산</span></div>
+   <fieldset id="settingsFields"><legend class="sr-only">운행 환경 설정</legend>
+   <label class="field-label">주행 경로</label><div id="routeChoices" class="route-choices"></div>
+   <details class="custom-editor"><summary>＋ 나만의 경로 설계</summary><p class="hint">공통 출발 0m → 중간 정차 8m → 도착 0m. 두 언덕의 높이를 바꿔 보세요.</p><div class="two-fields"><label>길이 (m)<input id="customLength" type="number" min="800" max="2000" step="100" value="1200"></label><label>제한속도 (km/h)<input id="customLimit" type="number" min="30" max="70" value="50"></label><label>첫 언덕 높이 (m)<input id="customPeak1" type="number" min="-20" max="50" value="25"></label><label>두 번째 높이 (m)<input id="customPeak2" type="number" min="-20" max="50" value="20"></label></div><button id="applyCustom" class="button secondary full">경로 적용</button></details>
+   <div class="divider"></div><label class="slider-label" for="deadline">도착 제한시간 <output id="deadlineOut">220초 이내</output></label><input id="deadline" type="range" min="80" max="480" step="10" value="220"><p class="hint">모든 경로에 동일하게 적용 · 중간 4초 정차 필수</p>
+   <label class="slider-label" for="mass">차량 질량 <output id="massOut">1,700 kg</output></label><input id="mass" type="range" min="900" max="3000" step="100" value="1700">
+   <label class="slider-label" for="wind">맞바람 <output id="windOut">0 m/s</output></label><input id="wind" type="range" min="-10" max="15" value="0"><p class="hint">음수는 뒷바람입니다.</p>
+   <details><summary>차량·에너지 상세 설정</summary><div class="two-fields"><label>공기저항계수 Cd<input id="cd" type="number" min="0.15" max="0.6" step="0.01" value="0.28"></label><label>전면적 (m²)<input id="area" type="number" min="1.5" max="4" step="0.1" value="2.3"></label><label>구름저항계수<input id="crr" type="number" min="0.005" max="0.03" step="0.001" value="0.010"></label><label>구동 효율<input id="efficiency" type="number" min="0.65" max="0.98" step="0.01" value="0.90"></label><label>회생 효율<input id="regen" type="number" min="0" max="0.9" step="0.05" value="0.65"></label><label>보조전력 (W)<input id="auxiliary" type="number" min="0" max="3000" step="100" value="700"></label></div></details>
+   </fieldset>
+   <div class="model-note"><span>ƒ</span><p>경사 · 가속도 · 공기저항 · 구름저항<br>회생제동 · 보조전력을 함께 계산합니다.</p></div>
+  </aside>
+  <section class="main-column">
+   <div class="panel simulator"><div class="section-head"><h2><span class="section-num">02</span> 드라이빙 시뮬레이터</h2><span id="modeBadge" class="badge">주행 준비</span></div>
+    <div class="sim-info"><span id="routeTitle">언덕 직행</span><span id="routeMeta">1.00 km · 중간 정차 1회</span></div>
+    <div class="scene"><canvas id="scene" aria-label="경로 고도와 차량 위치를 보여주는 시뮬레이션"></canvas><div class="scene-label"><span class="status-dot"></span> <span id="sceneStatus">출발 준비 완료</span></div><span class="scene-caption">고도 단면 · 가로/세로 축척은 서로 다릅니다</span></div>
+    <div class="telemetry"><div><span>현재 속도</span><strong id="speedValue">0.0 <small>km/h</small></strong></div><div><span>누적 에너지</span><strong id="energyValue">0.0 <small>Wh</small></strong></div><div><span>주행 시간</span><strong id="timeValue">0.0 <small>s</small></strong></div><div><span>도로 경사각</span><strong id="gradeValue">0.0 <small>°</small></strong></div></div>
+    <div class="progress-track"><div id="driveProgress"></div></div>
+    <div class="driver-controls"><div class="drive-actions"><button id="startDrive" class="button primary">▶ 직접 주행</button><button id="pauseDrive" class="button secondary" disabled>일시정지</button><button id="resetDrive" class="icon-button" aria-label="주행 초기화" title="초기화">↺</button></div><label class="playback-label">재생 <select id="playback"><option value="1">1×</option><option value="4" selected>4×</option><option value="10">10×</option></select></label></div>
+    <div class="pedals"><button id="brake" class="pedal brake">↓ 감속 <small>목표 −7.2 km/h</small></button><div class="target-speed"><span>목표 속도</span><strong id="targetValue">36.0</strong><small>km/h</small></div><button id="accelerate" class="pedal accelerate">↑ 가속 <small>목표 +7.2 km/h</small></button></div>
+    <p class="hint control-hint">↑ / ↓ 키 또는 버튼으로 목표 속도를 바꾸세요. 25m마다 가감속을 계산합니다.<br>제한속도·출력·정차 보조가 적용되며, 정차 지점에서는 자동으로 4초 기다립니다.</p>
+    <div class="quick-try"><span>빠르게 실험하기</span><button data-preset="wave">가속·감속 반복</button><button data-preset="smooth">일정 속도 목표</button><button data-preset="fast">빠른 주행</button></div>
+   </div>
+   <div class="panel results"><div class="section-head"><h2><span class="section-num">03</span> 운행 비교 & 학습</h2><button id="exportCsv" class="text-button" disabled>CSV 내보내기 ↗</button></div>
+    <div id="emptyResult" class="empty-result"><div class="empty-icon">∫</div><h3>한 번의 주행이, 하나의 실험이 됩니다.</h3><p>직접 주행하거나 위의 예시를 선택하면<br>내 운행과 계산된 경로의 차이를 분석합니다.</p></div>
+    <div id="resultContent" hidden><div id="comparisonSummary" class="comparison-summary"></div><div class="comparison-layout"><div id="resultTable"></div><div class="feedback-box"><p class="eyebrow">LEARNING NOTES</p><ul id="feedback"></ul></div></div>
+     <div class="chart-tabs" role="group" aria-label="비교 그래프 선택"><button class="active" data-chart="v">속도</button><button data-chart="power">전력</button><button data-chart="energy">누적 에너지</button></div><div class="chart-legend"><span class="legend-user">내 운행</span><span class="legend-best">계산 기준</span><span>공통 축: 경과 시간 (s)</span></div><canvas id="chart" aria-label="내 운행과 계산 기준의 시간별 비교 그래프"></canvas><p id="chartExplanation" class="hint"></p>
+     <div class="result-bottom"><button id="replayUser" class="button secondary">내 운행 재생</button><button id="replayBest" class="button secondary">계산 기준 재생</button><span>재생 후 다시 주행하며 개선해 보세요.</span></div>
+    </div>
+    <p id="busy" class="busy" hidden>경사와 속도 조합을 계산하고 있습니다…</p>
+   </div>
+  </section>
+ </div>
+ <section class="panel calculus"><div class="section-head"><h2>주행을 이해하는 세 가지 식</h2><span class="small-tag">CALCULUS, IN MOTION</span></div><div class="formula-grid"><article><span class="formula-num">01 / 미분</span><h3>속도의 변화가 힘을 만든다</h3><div class="equation">a(t) = dv / dt</div><p>같은 속도에 도달하더라도 가속 과정이 다르면 출력과 제동 손실이 달라집니다. 거리 격자에서는 <b>a = (v₁² − v₀²) / 2Δs</b>를 사용합니다.</p></article><article><span class="formula-num">02 / 힘과 전력</span><h3>언덕과 바람도 에너지를 쓴다</h3><div class="equation">P<sub>wheel</sub> = F<sub>total</sub> · v</div><p>F = ma + mg sinθ + Cᵣᵣmg cosθ + ½ρCᴅA(v+w)|v+w|. 배터리 전력에는 구동 효율, 회생 한도와 보조전력을 적용합니다.</p></article><article><span class="formula-num">03 / 적분과 최적화</span><h3>전력을 쌓아 소비량을 구한다</h3><div class="equation">E = ∫ P<sub>battery</sub>(t) dt</div><p>음의 전력은 에너지 회수입니다. 출발·도착 정지, 중간 정차, 출력과 제한시간을 만족하는 후보 중 배터리 에너지가 낮은 운행을 찾습니다.</p></article></div>
+ <details class="math-details"><summary>최대 효율 속도는 어떻게 구하나요? · 모델과 한계 보기</summary><div class="math-detail-content"><p>평지·무풍·일정 속도에서는 거리당 에너지 e(v) = (Cᵣᵣmg + ½ρCᴅAv²)/η + Pₐᵤₓ/v 입니다. 이를 미분하면 e′(v) = ρCᴅAv/η − Pₐᵤₓ/v²이며, e′(v)=0에서 <b>v* = ∛(Pₐᵤₓη / ρCᴅA)</b>입니다. 현재 설정의 평지·무풍 참고 속도: <b id="steadySpeed">약 33 km/h</b>. 보조전력이 0이면 양의 유한 최솟값 속도는 없습니다.</p><p>실제 최적화는 이 일정속도 식만 사용하지 않습니다. 거리 25m, 속도 2m/s, 시간 0.5초 격자의 동적 계획법으로 경사와 정차를 반영합니다. 각 구간 시간을 올림하므로 실제 도착시간보다 보수적입니다. 격자 밖의 연속 최적해나 모든 도로의 전역 최적해를 보장하지 않습니다.</p><p>차량은 가상의 교육 모델입니다. 구동 효율은 일정하며 배터리 SOC·온도·타이어 미끄럼·곡선 주행은 모델링하지 않습니다. 회생은 기계 출력 45kW까지, 구동은 85kW까지입니다. 출발·종료 고도는 같고, 지도는 실제 도로가 아닌 고도 단면입니다. 내리막 회생에는 제동이 필요하며 무한한 에너지 회수는 불가능합니다.</p><p>참고: <a href="https://research-hub.nlr.gov/en/publications/fastsim-a-model-to-estimate-vehicle-efficiency-cost-and-performan-2/" target="_blank" rel="noreferrer">Brooker et al., FASTSim (2015)</a>의 힘·전력 기반 모델 구성. 본 프로젝트는 별도로 구현한 단순화 모델이며 FASTSim 검증을 받은 모델은 아닙니다.</p></div></details></section>
+ <footer><span>EV CALCULUS LAB</span><span>가상의 도로에서 배우는, 실제 미적분.</span><a href="https://github.com/LoggerVibe/vibe-coding" target="_blank" rel="noreferrer">GitHub ↗</a></footer>
+</main><div id="toast" class="toast" role="status" aria-live="polite" hidden></div>
+</body></html>
