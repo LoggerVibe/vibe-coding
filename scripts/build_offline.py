@@ -15,5 +15,5 @@ html = html[:start] + html[end:]
 html = html.replace('</body>', scripts + '</body>')
 html = html.replace('href="index.html"', 'href="#"')
 (root / 'EV-Calculus-Lab.html').write_text(html)
-(root / 'EV-Calculus-Lab-v4-Learning.html').write_text(html)
+(root / 'EV-Calculus-Lab-v5-Learning.html').write_text(html)
 print('Built EV-Calculus-Lab.html')
