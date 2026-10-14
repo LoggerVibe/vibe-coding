@@ -2,19 +2,23 @@
 
 가상의 전기차를 직접 운전하고, 같은 출발·도착 지점의 후보 경로에서 계산한 에너지 최소 운행과 비교하는 한국어 학습용 시뮬레이터입니다.
 
-## 실행
+## 가장 쉬운 실행: HTML 파일 열기
 
-Python **3.10 이상**만 있으면 됩니다. `pip install` 없이 실행됩니다.
+저장소의 **EV-Calculus-Lab.html**을 다운로드한 후 더블클릭하여 Chrome 또는 Edge에서 여세요. Python 설치, 터미널, `127.0.0.1:8000`, 인터넷 연결이 필요 없습니다. GitHub 파일 화면에서는 Raw/다운로드 버튼으로 파일을 저장하세요. GitHub의 소스 코드 미리보기는 앱 실행 화면이 아닙니다.
 
-```bash
-git clone https://github.com/LoggerVibe/vibe-coding.git
-cd vibe-coding
-python app.py
-```
+계산은 브라우저 안에서 수행됩니다. `static/index.html`도 함께 있는 engine.js, app.js, style.css를 이용해 직접 열 수 있습니다. 단일 파일을 다시 생성하려면 `python scripts/build_offline.py`를 실행하세요.
 
-브라우저에서 **http://127.0.0.1:8000**을 여세요. Windows에서는 `python` 대신 `py`를 사용할 수 있습니다. 포트를 바꾸려면 `python app.py --port 8001`을 실행합니다. 종료는 터미널에서 `Ctrl+C`입니다. 서버는 기본적으로 로컬 PC에서만 접근할 수 있습니다. GitHub Pages는 Python 서버를 실행할 수 없으므로 이 저장소만 올렸다고 웹사이트가 배포되지는 않습니다.
+기존 Python 서버는 `python app.py`로 계속 실행할 수 있습니다.
 
-외부 Python/JavaScript 패키지는 필요 없습니다. Google Fonts를 불러올 수 없는 환경에서는 시스템 글꼴로 표시됩니다.
+## 두 운행을 동시에 비교
+
+직접 주행을 끝내거나 예시 운행을 선택하면 **내 운행과 계산 기준을 동시에 보기** 화면에서 두 차량이 같은 경과 시간으로 재생됩니다.
+
+- 보라색은 사용자 운행, 초록색은 계산 기준입니다.
+- 전체 후보의 최소 에너지 경로 또는 사용자와 같은 경로의 최소 에너지 운행을 선택할 수 있습니다.
+- 두 고도 단면은 같은 거리·고도 축척을 사용합니다. 차량의 위치, 속도, 누적 Wh를 함께 표시합니다.
+- 동시 재생, 일시정지, 시간 슬라이더로 원하는 시점을 비교합니다. 먼저 도착한 차량은 목적지에서 대기하며 더 이상 운행 에너지를 누적하지 않습니다.
+- 계산 기준은 정해진 격자 안의 최솟값이며 연속 공간의 이상적 전역 최적해는 아닙니다. 비교할 해가 없으면 안내를 표시합니다.
 
 ## 사용 순서
 
@@ -83,7 +87,9 @@ python -m unittest discover -s tests -v
 app.py          표준 라이브러리 HTTP 서버와 JSON API
 physics.py      힘·출력·에너지 적분 모델
 model.py        경로 생성, DP, 운행 평가와 비교
-static/         한국어 UI, Canvas 주행·그래프, CSV 출력
+static/         한국어 UI, 브라우저 계산 엔진, 동시 비교·그래프, CSV 출력
+EV-Calculus-Lab.html 서버 없이 여는 단일 HTML
+scripts/build_offline.py 단일 파일 생성
 tests/          물리·최적화·입력 검증
 ```
 

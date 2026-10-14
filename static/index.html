@@ -1,8 +1,8 @@
 <!doctype html>
 <html lang="ko">
-<head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>EV Calculus Lab · 미적분으로 달리다</title><link rel="stylesheet" href="style.css"><script src="app.js" defer></script></head>
+<head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>EV Calculus Lab · 미적분으로 달리다</title><link rel="stylesheet" href="style.css"><script src="engine.js" defer></script><script src="app.js" defer></script></head>
 <body>
-<header class="topbar"><a class="brand" href="/" aria-label="EV Calculus Lab 홈"><span class="brand-icon">∫</span><strong>EV <span>CALCULUS LAB</span></strong></a><div class="top-right"><span class="status-dot"></span> PHYSICS SIMULATION <span class="version">v1.0</span></div></header>
+<header class="topbar"><a class="brand" href="index.html" aria-label="EV Calculus Lab 홈"><span class="brand-icon">∫</span><strong>EV <span>CALCULUS LAB</span></strong></a><div class="top-right"><span class="status-dot"></span> PHYSICS SIMULATION <span class="version">v2.0 · OFFLINE</span></div></header>
 <main>
  <section class="intro"><div><p class="eyebrow">DRIVE. COMPARE. UNDERSTAND.</p><h1>가장 효율적인 길을,<br><em>미적분으로 찾다.</em></h1><p class="subtitle">같은 목적지, 다른 에너지. 직접 운전하고 계산된 운행과 비교하며<br class="desktop"> 속도와 경사가 만드는 차이를 발견하세요.</p></div><div class="intro-note"><span>오늘의 탐구 질문</span><p>가장 짧은 길이<br>가장 효율적인 길일까요?</p><div>01 <span>경로 선택</span> → 02 <span>주행</span> → 03 <span>비교</span></div></div></section>
  <div class="workspace">
@@ -30,7 +30,7 @@
    </div>
    <div class="panel results"><div class="section-head"><h2><span class="section-num">03</span> 운행 비교 & 학습</h2><button id="exportCsv" class="text-button" disabled>CSV 내보내기 ↗</button></div>
     <div id="emptyResult" class="empty-result"><div class="empty-icon">∫</div><h3>한 번의 주행이, 하나의 실험이 됩니다.</h3><p>직접 주행하거나 위의 예시를 선택하면<br>내 운행과 계산된 경로의 차이를 분석합니다.</p></div>
-    <div id="resultContent" hidden><div id="comparisonSummary" class="comparison-summary"></div><div class="comparison-layout"><div id="resultTable"></div><div class="feedback-box"><p class="eyebrow">LEARNING NOTES</p><ul id="feedback"></ul></div></div>
+    <div id="resultContent" hidden><section class="pair-comparison"><h3>내 운행과 계산 기준을 동시에 보기</h3><label>비교 대상 <select id="comparisonType"><option value="best">전체 후보 중 최소 에너지 경로</option><option value="same">내 경로에서 계산한 최소 에너지 운행</option></select></label><p id="pairStatus" class="hint"></p><canvas id="pairScene" aria-label="같은 경과 시간에서 사용자와 계산 기준의 고도 경로 및 차량 위치 비교"></canvas><div class="pair-controls"><button id="replayTogether" class="button primary">▶ 동시 재생</button><button id="pausePair" class="button secondary">비교 일시정지</button><span id="pairClock"></span></div><input id="pairSeek" type="range" min="0" max="220" value="0" step="0.1" aria-label="동시 비교 경과 시간"><p class="hint">보라색: 내 운행 · 초록색: 계산 기준. 두 고도 단면은 동일한 거리·고도 축척입니다. 실제 지도가 아닌 가상 경로이며, 계산 기준은 격자 내 최솟값입니다.</p></section><div id="comparisonSummary" class="comparison-summary"></div><div class="comparison-layout"><div id="resultTable"></div><div class="feedback-box"><p class="eyebrow">LEARNING NOTES</p><ul id="feedback"></ul></div></div>
      <div class="chart-tabs" role="group" aria-label="비교 그래프 선택"><button class="active" data-chart="v">속도</button><button data-chart="power">전력</button><button data-chart="energy">누적 에너지</button></div><div class="chart-legend"><span class="legend-user">내 운행</span><span class="legend-best">계산 기준</span><span>공통 축: 경과 시간 (s)</span></div><canvas id="chart" aria-label="내 운행과 계산 기준의 시간별 비교 그래프"></canvas><p id="chartExplanation" class="hint"></p>
      <div class="result-bottom"><button id="replayUser" class="button secondary">내 운행 재생</button><button id="replayBest" class="button secondary">계산 기준 재생</button><span>재생 후 다시 주행하며 개선해 보세요.</span></div>
     </div>
